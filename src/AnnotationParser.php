@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Dgame\Annotation;
 
-use ReflectionObject;
-use ReflectionProperty;
-
 /**
  * Class AnnotationParser
  * @package Dgame\Annotation
@@ -15,7 +12,6 @@ final class AnnotationParser
 {
     private const PROPERTY_PATTERN   = '/(?<name>\w+)(?:\s*=\s*(?<value>.+?)(?:\s*,\s*|\z))?/S';
     private const ANNOTATION_PATTERN = '/@(?<name>\w+)(?:\s+(?<value>.+)|\((?<properties>.+?)\))?/S';
-    private const DEFAULT_PROPERTY   = 'value';
 
     /**
      * @var array<string, mixed>
@@ -97,56 +93,9 @@ final class AnnotationParser
             return null;
         }
 
-        $annotation = $this->getAnnotation($name);
-        $refl       = new ReflectionObject($annotationObject);
-        $properties = $refl->getProperties();
-
-        if (!is_array($annotation)) {
-            self::emplaceValue($annotationObject, $annotation, $properties);
-        } else {
-            self::setAnnotationProperties($properties, $annotationObject, $annotation);
-        }
+        $setter = new AnnotationPropertySetter($annotationObject);
+        $setter->emplaceAnnotation($this->getAnnotation($name));
 
         return $annotationObject;
-    }
-
-    /**
-     * @param AnnotationInterface  $annotationObject
-     * @param mixed                $annotation
-     * @param ReflectionProperty[] $properties
-     */
-    private static function emplaceValue(AnnotationInterface $annotationObject, $annotation, array $properties): void
-    {
-        if (count($properties) === 1) {
-            self::setAnnotationProperty($properties[0], $annotationObject, $annotation);
-        } else {
-            self::setAnnotationProperties($properties, $annotationObject, [self::DEFAULT_PROPERTY => $annotation]);
-        }
-    }
-
-    /**
-     * @param ReflectionProperty  $property
-     * @param AnnotationInterface $annotationObject
-     * @param mixed               $value
-     */
-    private static function setAnnotationProperty(ReflectionProperty $property, AnnotationInterface $annotationObject, $value): void
-    {
-        $property->setAccessible(true);
-        $property->setValue($annotationObject, $value);
-    }
-
-    /**
-     * @param ReflectionProperty[] $properties
-     * @param AnnotationInterface  $annotationObject
-     * @param array                $annotation
-     */
-    private static function setAnnotationProperties(array $properties, AnnotationInterface $annotationObject, array $annotation): void
-    {
-        foreach ($properties as $property) {
-            $name = $property->getName();
-            if (array_key_exists($name, $annotation)) {
-                self::setAnnotationProperty($property, $annotationObject, $annotation[$name]);
-            }
-        }
     }
 }
