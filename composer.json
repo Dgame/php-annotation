@@ -1,0 +1,44 @@
+{
+    "name": "dgame/php-annotation",
+    "authors": [
+        {
+            "name": "Dgame",
+            "email": "rswhite4@googlemail.com"
+        }
+    ],
+    "description": "php annotation",
+    "license": "MIT",
+    "type": "library",
+    "homepage": "https://github.com/dgame/php-serde",
+    "keywords": [
+        "annotation"
+    ],
+    "autoload": {
+        "classmap": [
+            "src/"
+        ],
+        "psr-4": {
+            "Dgame\\Annotation\\": "src/",
+            "Dgame\\Annotation\\Test\\": "test/"
+        }
+    },
+    "require": {
+        "php": "^7.2",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.2",
+        "phpstan/phpstan": "^0.11.12",
+        "phan/phan": "2.x"
+    },
+    "scripts": {
+        "fast-test": [
+            "phpunit test"
+        ],
+        "test": [
+            "phpunit test --colors=always",
+            "phpstan analyse src --level=7",
+            "phan"
+        ]
+    }
+}

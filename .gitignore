@@ -1,0 +1,7 @@
+/logs/*
+.env
+tags
+.idea
+vendor
+/.phpunit.result.cache
+build/
