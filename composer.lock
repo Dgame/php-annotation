@@ -4,8 +4,66 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c389223032a42d7d58d18a7652c513b8",
-    "packages": [],
+    "content-hash": "c6f86b8aa5a827581b8776824cb42103",
+    "packages": [
+        {
+            "name": "jawira/case-converter",
+            "version": "v3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jawira/case-converter.git",
+                "reference": "adf637313d143646d2a80bded659cb5bed8be1f0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jawira/case-converter/zipball/adf637313d143646d2a80bded659cb5bed8be1f0",
+                "reference": "adf637313d143646d2a80bded659cb5bed8be1f0",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7.1"
+            },
+            "suggest": {
+                "pds/skeleton": "PHP Package Development Standards",
+                "phing/phing": "PHP Build Tool"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Jawira\\CaseConverter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jawira Portugal",
+                    "email": "dev@tugal.be",
+                    "homepage": "http://jawira.com/"
+                }
+            ],
+            "description": "Convert strings between 12 naming conventions: Snake case, Camel case, Pascal case, Kebab case, Ada case, Train case, Cobol case, Macro case, Upper case, Lower case, Sentence case, and Title case.",
+            "homepage": "https://jawira.github.io/case-converter/",
+            "keywords": [
+                "Ada case",
+                "Cobol case",
+                "Macro case",
+                "Train case",
+                "camel case",
+                "kebab case",
+                "lower case",
+                "pascal case",
+                "sentence case",
+                "snake case",
+                "title case",
+                "upper case"
+            ],
+            "time": "2019-07-25T18:34:21+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "composer/semver",

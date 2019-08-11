@@ -38,7 +38,8 @@ class AnnotationParserTest extends TestCase
 
     public function testEmplaceSingleWithOneValueProperty(): void
     {
-        $single = new class() implements AnnotationInterface {
+        $single = new class() implements AnnotationInterface
+        {
             public $value;
 
             public function getName(): string
@@ -62,7 +63,8 @@ class AnnotationParserTest extends TestCase
 
     public function testEmplaceSingleWithOneProperty(): void
     {
-        $single = new class() implements AnnotationInterface {
+        $single = new class() implements AnnotationInterface
+        {
             public $name;
 
             public function getName(): string
@@ -86,7 +88,8 @@ class AnnotationParserTest extends TestCase
 
     public function testEmplaceProperties(): void
     {
-        $single = new class() implements AnnotationInterface {
+        $single = new class() implements AnnotationInterface
+        {
             public $foo;
             public $bar;
 
@@ -115,7 +118,8 @@ class AnnotationParserTest extends TestCase
 
     public function testEmplaceSingleOrProperties(): void
     {
-        $single = new class() implements AnnotationInterface {
+        $single = new class() implements AnnotationInterface
+        {
             public $value;
             public $foo;
             public $bar;
@@ -165,7 +169,8 @@ class AnnotationParserTest extends TestCase
 
     public function testEmplaceNoValue(): void
     {
-        $single = new class() implements AnnotationInterface {
+        $single = new class() implements AnnotationInterface
+        {
             public $value;
 
             public function getName(): string
@@ -185,5 +190,53 @@ class AnnotationParserTest extends TestCase
         $result = $parser->emplaceAnnotationIn($single);
         $this->assertNull($result);
         $this->assertNull($single->value);
+    }
+
+    /**
+     * @param string $comment
+     * @param mixed  $annotationValue
+     *
+     * @param string $key
+     *
+     * @param        $propertyValue
+     *
+     * @dataProvider getSnakeCamelCaseComments
+     */
+    public function testEmplaceSnakeToCamel(string $comment, $annotationValue, string $key, $propertyValue): void
+    {
+        $case = new class() implements AnnotationInterface
+        {
+            public $aCamelCaseValue;
+
+            public function getName(): string
+            {
+                return 'case';
+            }
+        };
+
+        $parser = new AnnotationParser();
+        $parser->parse($comment);
+
+        $this->assertTrue($parser->hasAnnotation($case->getName()));
+        $this->assertEquals([$key => $annotationValue], $parser->getAnnotation($case->getName()));
+        $this->assertNull($case->aCamelCaseValue);
+        $result = $parser->emplaceAnnotationIn($case);
+        $this->assertNotNull($result);
+        $this->assertEquals($propertyValue, $case->aCamelCaseValue);
+    }
+
+    public function getSnakeCamelCaseComments(): array
+    {
+        return [
+            ['@case(a_camel_case_value = 42)', 42, 'a_camel_case_value', 42],
+            ['@case(aCamelCaseValue = Test)', 'Test', 'aCamelCaseValue', 'Test'],
+            ['@case(ACamelCaseValue = Test)', 'Test', 'ACamelCaseValue', 'Test'],
+            ['@case(a-camel-case-value = 3.14)', 3.14, 'a-camel-case-value', 3.14],
+            ['@case(A-Camel-Case-Value = 3.14)', 3.14, 'A-Camel-Case-Value', 3.14],
+            ['@case(b)', true, 'b', null], // 'cause 'b' does not exist
+            ['@case(a Camel Case Value = false)', true, 'a', null], // 'cause only 'a' is parsed but 'a' does not exist
+            ['@case(a-Camel-Case-Value = 42)', 42, 'a-Camel-Case-Value', null], // 'cause it's an invalid case
+            ['@case(a_Camel_Case_Value = Foo)', 'Foo', 'a_Camel_Case_Value', null], // 'cause it's an invalid case
+        ];
     }
 }

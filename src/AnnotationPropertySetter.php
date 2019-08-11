@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Dgame\Annotation;
 
+use Jawira\CaseConverter\CaseConverterException;
+use Jawira\CaseConverter\Convert;
+use Jawira\CaseConverter\Glue\DashGluer;
+use Jawira\CaseConverter\Glue\UnderscoreGluer;
 use ReflectionObject;
 use ReflectionProperty;
 
@@ -14,6 +18,15 @@ use ReflectionProperty;
 final class AnnotationPropertySetter
 {
     private const DEFAULT_PROPERTY = 'value';
+    private const CONVERT_METHODS  = [
+        'toLower',
+        'toSnake',
+        'toKebab',
+        'toAda',
+        'toTrain',
+        'toCamel',
+        'toPascal'
+    ];
 
     /**
      * @var AnnotationInterface
@@ -75,7 +88,75 @@ final class AnnotationPropertySetter
             $name = $property->getName();
             if (array_key_exists($name, $annotation)) {
                 $this->setAnnotationProperty($property, $annotation[$name]);
+            } else {
+                $this->setByCaseConversion($annotation, $property);
             }
         }
+    }
+
+    /**
+     * @param array              $annotation
+     * @param ReflectionProperty $property
+     */
+    private function setByCaseConversion(array $annotation, ReflectionProperty $property): void
+    {
+        $name = self::findName($annotation, $property);
+        if ($name !== null && array_key_exists($name, $annotation)) {
+            $this->setAnnotationProperty($property, $annotation[$name]);
+        }
+    }
+
+    /**
+     * @param array              $annotation
+     * @param ReflectionProperty $property
+     *
+     * @return string|null
+     */
+    private static function findName(array $annotation, ReflectionProperty $property): ?string
+    {
+        foreach (self::CONVERT_METHODS as $method) {
+            $name = self::convert($property->getName(), $method);
+            if (array_key_exists($name, $annotation)) {
+                return $name;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $name
+     * @param string $method
+     *
+     * @return string
+     */
+    private static function convert(string $name, string $method): string
+    {
+        try {
+            /** @var callable $closure */
+            $closure = [new Convert($name), $method];
+
+            return str_replace(' ', self::getSplitter($name), $closure());
+        } catch (CaseConverterException $_) {
+            return $name;
+        }
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    private static function getSplitter(string $name): string
+    {
+        if (mb_strpos($name, UnderscoreGluer::DELIMITER) !== false) {
+            return UnderscoreGluer::DELIMITER;
+        }
+
+        if (mb_strpos($name, DashGluer::DELIMITER) !== false) {
+            return DashGluer::DELIMITER;
+        }
+
+        return '';
     }
 }

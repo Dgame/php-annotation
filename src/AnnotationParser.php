@@ -10,8 +10,8 @@ namespace Dgame\Annotation;
  */
 final class AnnotationParser
 {
-    private const PROPERTY_PATTERN   = '/(?<name>\w+)(?:\s*=\s*(?<value>.+?)(?:\s*,\s*|\z))?/S';
     private const ANNOTATION_PATTERN = '/@(?<name>\w+)(?:\s+(?<value>.+)|\((?<properties>.+?)\))?/S';
+    private const PROPERTY_PATTERN   = '/(?<name>[\w-]+)(?:\s*=\s*(?<value>.+))?/S';
 
     /**
      * @var array<string, mixed>
@@ -36,17 +36,17 @@ final class AnnotationParser
     }
 
     /**
-     * @param string $content
+     * @param string $properties
      * @param string $name
      */
-    private function parseProperties(string $content, string $name): void
+    private function parseProperties(string $properties, string $name): void
     {
-        if (preg_match_all(self::PROPERTY_PATTERN, $content, $properties, PREG_SET_ORDER) === 0) {
-            return;
-        }
+        foreach (explode(',', $properties) as $property) {
+            if (preg_match(self::PROPERTY_PATTERN, trim($property), $matches) !== 0) {
+                $propertyName = trim($matches['name']);
 
-        foreach ($properties ?? [] as $property) {
-            $this->annotations[$name][$property['name']] = self::getValue($property, 'value');
+                $this->annotations[$name][$propertyName] = self::getValue($matches, 'value');
+            }
         }
     }
 
