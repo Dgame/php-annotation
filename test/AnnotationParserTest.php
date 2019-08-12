@@ -188,7 +188,7 @@ class AnnotationParserTest extends TestCase
 
         $this->assertNull($single->value);
         $result = $parser->emplaceAnnotationIn($single);
-        $this->assertNull($result);
+        $this->assertFalse($result);
         $this->assertNull($single->value);
     }
 

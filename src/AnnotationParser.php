@@ -84,18 +84,18 @@ final class AnnotationParser
     /**
      * @param AnnotationInterface $annotationObject
      *
-     * @return AnnotationInterface|null
+     * @return bool
      */
-    public function emplaceAnnotationIn(AnnotationInterface $annotationObject): ?AnnotationInterface
+    public function emplaceAnnotationIn(AnnotationInterface $annotationObject): bool
     {
         $name = $annotationObject->getName();
         if (!$this->hasAnnotation($name)) {
-            return null;
+            return false;
         }
 
         $setter = new AnnotationPropertySetter($annotationObject);
         $setter->emplaceAnnotation($this->getAnnotation($name));
 
-        return $annotationObject;
+        return true;
     }
 }
