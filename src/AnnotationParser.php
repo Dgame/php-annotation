@@ -14,7 +14,7 @@ final class AnnotationParser
     private const PROPERTY_PATTERN   = '/(?<name>[\w-]+)(?:\s*=\s*(?<value>.+))?/S';
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, array<string|int, mixed>>
      */
     private $annotations = [];
 
@@ -30,9 +30,37 @@ final class AnnotationParser
             if (array_key_exists('properties', $matches)) {
                 $this->parseProperties($matches['properties'], $name);
             } else {
-                $this->annotations[$name] = self::getValue($matches, 'value');
+                $this->setAnnotation($name, $matches);
             }
         }
+    }
+
+    /**
+     * @param string $name
+     * @param array $matches
+     */
+    private function setAnnotation(string $name, array $matches): void
+    {
+        $value = self::getValue($matches, 'value');
+        if (array_key_exists($name, $this->annotations)) {
+            $this->appendAnnotation($name, $value);
+        } else {
+            $this->annotations[$name] = $value;
+        }
+    }
+
+    /**
+     * @param string $name
+     * @param mixed  $value
+     */
+    private function appendAnnotation(string $name, $value): void
+    {
+        $annotation = $this->getAnnotation($name);
+        if (!is_array($annotation)) {
+            $this->annotations[$name] = [$annotation];
+        }
+
+        $this->annotations[$name][] = $value;
     }
 
     /**
@@ -54,7 +82,7 @@ final class AnnotationParser
      * @param array  $values
      * @param string $key
      *
-     * @return bool|mixed
+     * @return mixed
      */
     private static function getValue(array $values, string $key)
     {
