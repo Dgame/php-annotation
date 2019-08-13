@@ -37,7 +37,7 @@ final class AnnotationParser
 
     /**
      * @param string $name
-     * @param array $matches
+     * @param array  $matches
      */
     private function setAnnotation(string $name, array $matches): void
     {
@@ -72,9 +72,20 @@ final class AnnotationParser
         foreach (explode(',', $properties) as $property) {
             if (preg_match(self::PROPERTY_PATTERN, trim($property), $matches) !== 0) {
                 $propertyName = trim($matches['name']);
-
+                $this->intoArray($name);
                 $this->annotations[$name][$propertyName] = self::getValue($matches, 'value');
             }
+        }
+    }
+
+    /**
+     * @param string $name
+     */
+    private function intoArray(string $name): void
+    {
+        $annotation = $this->annotations[$name] ?? [];
+        if (!is_array($annotation)) {
+            $this->annotations[$name] = [$annotation];
         }
     }
 

@@ -303,4 +303,27 @@ class AnnotationParserTest extends TestCase
         $this->assertEquals('Bar', $rename->value);
         $this->assertEquals('Foo', $rename->deserialize);
     }
+
+    public function testWithoutAndWithProperties(): void
+    {
+        $comment = "@rename Bar\n@rename(serialize = Foo)";
+        $parser  = new AnnotationParser();
+        $parser->parse($comment);
+
+        $rename = new class() implements AnnotationInterface
+        {
+            public $value;
+            public $serialize;
+
+            public function getName(): string
+            {
+                return 'rename';
+            }
+        };
+
+        $parser->emplaceAnnotationIn($rename);
+
+        $this->assertEquals('Bar', $rename->value);
+        $this->assertEquals('Foo', $rename->serialize);
+    }
 }
