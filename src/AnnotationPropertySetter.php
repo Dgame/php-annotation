@@ -82,14 +82,24 @@ final class AnnotationPropertySetter
     }
 
     /**
-     * @param array $annotation
+     * @param array $annotations
      */
-    private function setAnnotationProperties(array $annotation): void
+    private function setAnnotationProperties(array $annotations): void
     {
-        if (self::isNumericIndexed($annotation)) {
-            $this->setAnnotationProperties([self::DEFAULT_MULTIPLE_PROPERTY => $annotation]);
-        } else {
-            $this->assignProperties($annotation);
+        [
+            'int'    => $numericAnnotations,
+            'string' => $annotations
+        ] = self::separateNumericIndexedValues($annotations);
+
+        $numerics = count($numericAnnotations);
+        if ($numerics === 1) {
+            $this->setSingleProperty(array_pop($numericAnnotations));
+        } elseif ($numerics > 1) {
+            $this->setAnnotationProperties([self::DEFAULT_MULTIPLE_PROPERTY => $numericAnnotations]);
+        }
+
+        if (!empty($annotations)) {
+            $this->assignProperties($annotations);
         }
     }
 
@@ -177,10 +187,19 @@ final class AnnotationPropertySetter
     /**
      * @param array $annotation
      *
-     * @return bool
+     * @return array
      */
-    private static function isNumericIndexed(array $annotation): bool
+    public static function separateNumericIndexedValues(array $annotation): array
     {
-        return !empty(array_filter(array_keys($annotation), 'is_int'));
+        $output = ['int' => [], 'string' => []];
+        foreach ($annotation as $key => $value) {
+            if (is_int($key)) {
+                $output['int'][$key] = $value;
+            } else {
+                $output['string'][$key] = $value;
+            }
+        }
+
+        return $output;
     }
 }
