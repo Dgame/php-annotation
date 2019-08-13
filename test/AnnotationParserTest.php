@@ -248,8 +248,7 @@ class AnnotationParserTest extends TestCase
 
         $this->assertEquals(['a', 'b', 'c', 'd'], $parser->getAnnotation('alias'));
 
-        $alias = new class() implements AnnotationInterface
-        {
+        $alias             = new class() implements AnnotationInterface {
             public $values = [];
 
             public function getName(): string
