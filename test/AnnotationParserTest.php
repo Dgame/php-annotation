@@ -302,8 +302,7 @@ class AnnotationParserTest extends TestCase
         $parser  = new AnnotationParser();
         $parser->parse($comment);
 
-        $rename = new class() implements AnnotationInterface
-        {
+        $rename = new class() implements AnnotationInterface {
             public $value;
             public $serialize;
 
