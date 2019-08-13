@@ -17,8 +17,10 @@ use ReflectionProperty;
  */
 final class AnnotationPropertySetter
 {
-    private const DEFAULT_PROPERTY = 'value';
-    private const CONVERT_METHODS  = [
+    private const DEFAULT_SINGLE_PROPERTY   = 'value';
+    private const DEFAULT_MULTIPLE_PROPERTY = 'values';
+
+    private const CONVERT_METHODS = [
         'toLower',
         'toSnake',
         'toKebab',
@@ -65,7 +67,7 @@ final class AnnotationPropertySetter
         if (count($this->properties) === 1) {
             $this->setAnnotationProperty($this->properties[0], $annotation);
         } else {
-            $this->setAnnotationProperties([self::DEFAULT_PROPERTY => $annotation]);
+            $this->setAnnotationProperties([self::DEFAULT_SINGLE_PROPERTY => $annotation]);
         }
     }
 
@@ -83,6 +85,18 @@ final class AnnotationPropertySetter
      * @param array $annotation
      */
     private function setAnnotationProperties(array $annotation): void
+    {
+        if (self::isNumericIndexed($annotation)) {
+            $this->setAnnotationProperties([self::DEFAULT_MULTIPLE_PROPERTY => $annotation]);
+        } else {
+            $this->assignProperties($annotation);
+        }
+    }
+
+    /**
+     * @param array $annotation
+     */
+    private function assignProperties(array $annotation): void
     {
         foreach ($this->properties as $property) {
             $name = $property->getName();
@@ -158,5 +172,15 @@ final class AnnotationPropertySetter
         }
 
         return '';
+    }
+
+    /**
+     * @param array $annotation
+     *
+     * @return bool
+     */
+    private static function isNumericIndexed(array $annotation): bool
+    {
+        return !empty(array_filter(array_keys($annotation), 'is_int'));
     }
 }

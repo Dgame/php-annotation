@@ -248,6 +248,19 @@ class AnnotationParserTest extends TestCase
 
         $this->assertEquals(['a', 'b', 'c', 'd'], $parser->getAnnotation('alias'));
 
+        $alias = new class() implements AnnotationInterface
+        {
+            public $values = [];
+
+            public function getName(): string
+            {
+                return 'alias';
+            }
+        };
+
+        $parser->emplaceAnnotationIn($alias);
+        $this->assertEquals(['a', 'b', 'c', 'd'], $alias->values);
+
         $comment = implode(PHP_EOL, [
             '@alias(test = a)',
             '@alias(test = b)',
