@@ -38,8 +38,7 @@ class AnnotationParserTest extends TestCase
 
     public function testEmplaceSingleWithOneValueProperty(): void
     {
-        $single = new class() implements AnnotationInterface
-        {
+        $single = new class() implements AnnotationInterface {
             public $value;
 
             public function getName(): string
@@ -63,8 +62,7 @@ class AnnotationParserTest extends TestCase
 
     public function testEmplaceSingleWithOneProperty(): void
     {
-        $single = new class() implements AnnotationInterface
-        {
+        $single = new class() implements AnnotationInterface {
             public $name;
 
             public function getName(): string
@@ -88,8 +86,7 @@ class AnnotationParserTest extends TestCase
 
     public function testEmplaceProperties(): void
     {
-        $single = new class() implements AnnotationInterface
-        {
+        $single = new class() implements AnnotationInterface {
             public $foo;
             public $bar;
 
@@ -118,8 +115,7 @@ class AnnotationParserTest extends TestCase
 
     public function testEmplaceSingleOrProperties(): void
     {
-        $single = new class() implements AnnotationInterface
-        {
+        $single = new class() implements AnnotationInterface {
             public $value;
             public $foo;
             public $bar;
@@ -169,8 +165,7 @@ class AnnotationParserTest extends TestCase
 
     public function testEmplaceNoValue(): void
     {
-        $single = new class() implements AnnotationInterface
-        {
+        $single = new class() implements AnnotationInterface {
             public $value;
 
             public function getName(): string
@@ -204,8 +199,7 @@ class AnnotationParserTest extends TestCase
      */
     public function testEmplaceSnakeToCamel(string $comment, $annotationValue, string $key, $propertyValue): void
     {
-        $case = new class() implements AnnotationInterface
-        {
+        $case = new class() implements AnnotationInterface {
             public $aCamelCaseValue;
 
             public function getName(): string
@@ -254,8 +248,7 @@ class AnnotationParserTest extends TestCase
 
         $this->assertEquals(['a', 'b', 'c', 'd'], $parser->getAnnotation('alias'));
 
-        $alias = new class() implements AnnotationInterface
-        {
+        $alias             = new class() implements AnnotationInterface {
             public $values = [];
 
             public function getName(): string
@@ -287,8 +280,7 @@ class AnnotationParserTest extends TestCase
         $parser  = new AnnotationParser();
         $parser->parse($comment);
 
-        $rename = new class() implements AnnotationInterface
-        {
+        $rename = new class() implements AnnotationInterface {
             public $value;
             public $deserialize;
 
@@ -310,8 +302,7 @@ class AnnotationParserTest extends TestCase
         $parser  = new AnnotationParser();
         $parser->parse($comment);
 
-        $rename = new class() implements AnnotationInterface
-        {
+        $rename = new class() implements AnnotationInterface {
             public $value;
             public $serialize;
 
