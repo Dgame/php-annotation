@@ -318,4 +318,13 @@ class AnnotationParserTest extends TestCase
         $this->assertEquals('Bar', $rename->value);
         $this->assertEquals('Foo', $rename->serialize);
     }
+
+    public function testDocComment(): void
+    {
+        $comment = "/**\n* @var int\n*/";
+        $parser  = new AnnotationParser();
+        $parser->parse($comment);
+
+        $this->assertEquals('int', $parser->getAnnotation('var'));
+    }
 }
