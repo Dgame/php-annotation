@@ -23,10 +23,17 @@ final class AnnotationParser
      */
     public function parse(string $comment): void
     {
-        $offset = 0;
-        while (preg_match(self::ANNOTATION_PATTERN, $comment, $matches, 0, $offset) === 1) {
-            $offset += strlen($matches[0]);
-            $name   = $matches['name'];
+        $lines = preg_split('/(?=@)/S', $comment);
+        if (!is_array($lines)) {
+            return;
+        }
+
+        foreach ($lines as $line) {
+            if (preg_match(self::ANNOTATION_PATTERN, $line, $matches) !== 1) {
+                continue;
+            }
+
+            $name = $matches['name'];
             if (array_key_exists('properties', $matches)) {
                 $this->parseProperties($matches['properties'], $name);
             } else {
