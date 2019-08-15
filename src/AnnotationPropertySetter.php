@@ -77,8 +77,10 @@ final class AnnotationPropertySetter
      */
     private function setAnnotationProperty(ReflectionProperty $property, $value): void
     {
-        $property->setAccessible(true);
-        $property->setValue($this->annotationObject, $value);
+        if ($this->annotationObject->acceptValue($property->getName(), $value)) {
+            $property->setAccessible(true);
+            $property->setValue($this->annotationObject, $value);
+        }
     }
 
     /**

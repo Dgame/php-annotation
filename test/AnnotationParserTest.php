@@ -45,6 +45,11 @@ class AnnotationParserTest extends TestCase
             {
                 return 'single';
             }
+
+            public function acceptValue(string $name, $value): bool
+            {
+                return true;
+            }
         };
 
         $comment = '@single 3.14';
@@ -68,6 +73,11 @@ class AnnotationParserTest extends TestCase
             public function getName(): string
             {
                 return 'single';
+            }
+
+            public function acceptValue(string $name, $value): bool
+            {
+                return true;
             }
         };
 
@@ -93,6 +103,11 @@ class AnnotationParserTest extends TestCase
             public function getName(): string
             {
                 return 'multiple';
+            }
+
+            public function acceptValue(string $name, $value): bool
+            {
+                return true;
             }
         };
 
@@ -123,6 +138,11 @@ class AnnotationParserTest extends TestCase
             public function getName(): string
             {
                 return 'mixed';
+            }
+
+            public function acceptValue(string $name, $value): bool
+            {
+                return true;
             }
         };
 
@@ -172,6 +192,11 @@ class AnnotationParserTest extends TestCase
             {
                 return 'single';
             }
+
+            public function acceptValue(string $name, $value): bool
+            {
+                return true;
+            }
         };
 
         $comment = '@multiple foo = Test, bar=42';
@@ -205,6 +230,11 @@ class AnnotationParserTest extends TestCase
             public function getName(): string
             {
                 return 'case';
+            }
+
+            public function acceptValue(string $name, $value): bool
+            {
+                return true;
             }
         };
 
@@ -255,6 +285,11 @@ class AnnotationParserTest extends TestCase
             {
                 return 'alias';
             }
+
+            public function acceptValue(string $name, $value): bool
+            {
+                return true;
+            }
         };
 
         $parser->emplaceAnnotationIn($alias);
@@ -288,6 +323,11 @@ class AnnotationParserTest extends TestCase
             {
                 return 'rename';
             }
+
+            public function acceptValue(string $name, $value): bool
+            {
+                return true;
+            }
         };
 
         $parser->emplaceAnnotationIn($rename);
@@ -310,12 +350,75 @@ class AnnotationParserTest extends TestCase
             {
                 return 'rename';
             }
+
+            public function acceptValue(string $name, $value): bool
+            {
+                return true;
+            }
         };
 
         $parser->emplaceAnnotationIn($rename);
 
         $this->assertEquals('Bar', $rename->value);
         $this->assertEquals('Foo', $rename->serialize);
+    }
+
+    public function testAcceptValue():void
+    {
+        $comment = "@rename\n@rename(serialize)";
+        $parser  = new AnnotationParser();
+        $parser->parse($comment);
+
+        $rename = new class() implements AnnotationInterface {
+            public $value;
+            public $serialize;
+
+            public function getName(): string
+            {
+                return 'rename';
+            }
+
+            public function acceptValue(string $name, $value): bool
+            {
+                return is_string($value) && trim($value) !== '';
+            }
+        };
+
+        $parser->emplaceAnnotationIn($rename);
+
+        $this->assertNull($rename->value);
+        $this->assertNull($rename->serialize);
+    }
+
+    public function testAcceptSpecificValue():void
+    {
+        $comment = "@rename\n@rename(serialize)";
+        $parser  = new AnnotationParser();
+        $parser->parse($comment);
+
+        $rename = new class() implements AnnotationInterface {
+            public $value;
+            public $serialize;
+
+            public function getName(): string
+            {
+                return 'rename';
+            }
+
+            public function acceptValue(string $name, $value): bool
+            {
+                if ($name !== 'serialize') {
+                    return true;
+                }
+
+                return is_string($value) && trim($value) !== '';
+            }
+        };
+
+        $parser->emplaceAnnotationIn($rename);
+
+        $this->assertTrue($rename->value);
+        $this->assertNull($rename->serialize);
     }
 
     public function testDocComment(): void

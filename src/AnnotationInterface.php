@@ -13,4 +13,12 @@ interface AnnotationInterface
      * @return string
      */
     public function getName(): string;
+
+    /**
+     * @param string $name
+     * @param mixed  $value
+     *
+     * @return bool
+     */
+    public function acceptValue(string $name, $value): bool;
 }
