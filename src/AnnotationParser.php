@@ -19,6 +19,14 @@ final class AnnotationParser
     private $annotations = [];
 
     /**
+     * @return array<string, array<string|int, mixed>>
+     */
+    public function getAnnotations(): array
+    {
+        return $this->annotations;
+    }
+
+    /**
      * @param string $comment
      */
     public function parse(string $comment): void
