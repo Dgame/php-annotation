@@ -363,7 +363,7 @@ class AnnotationParserTest extends TestCase
         $this->assertEquals('Foo', $rename->serialize);
     }
 
-    public function testAcceptValue():void
+    public function testAcceptValue(): void
     {
         $comment = "@rename\n@rename(serialize)";
         $parser  = new AnnotationParser();
@@ -390,7 +390,7 @@ class AnnotationParserTest extends TestCase
         $this->assertNull($rename->serialize);
     }
 
-    public function testAcceptSpecificValue():void
+    public function testAcceptSpecificValue(): void
     {
         $comment = "@rename\n@rename(serialize)";
         $parser  = new AnnotationParser();
